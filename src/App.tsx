@@ -1,77 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import '@excalidraw/excalidraw/index.css'
-import { Excalidraw } from '@excalidraw/excalidraw'
-import { FiPlus, FiChevronLeft, FiChevronRight, FiEdit2, FiTrash2, FiFile } from 'react-icons/fi'
-// Local minimal types to avoid deep Excalidraw type imports
-type BinaryFiles = Record<string, unknown>
-type ExcalidrawAPI = {
-  updateScene: (opts: { elements?: readonly unknown[]; files?: BinaryFiles }) => void
-}
 import './App.css'
-
-type DesignMeta = {
-  id: string
-  title: string
-  updatedAt: number
-}
-
-type DesignContent = {
-  elements?: readonly unknown[]
-  files?: BinaryFiles
-  scrollToContent?: boolean
-}
-
-const STORAGE_KEYS = {
-  list: 'exclidraw:designs:list',
-  content: (id: string) => `exclidraw:designs:content:${id}`,
-}
-
-function loadDesignList(): DesignMeta[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.list)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed as DesignMeta[]
-  } catch {
-    return []
-  }
-}
-
-function saveDesignList(list: DesignMeta[]) {
-  localStorage.setItem(STORAGE_KEYS.list, JSON.stringify(list))
-}
-
-function loadDesignContent(id: string): DesignContent | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.content(id))
-    if (!raw) return null
-    return JSON.parse(raw)
-  } catch {
-    return null
-  }
-}
-
-function saveDesignContent(id: string, content: DesignContent) {
-  localStorage.setItem(STORAGE_KEYS.content(id), JSON.stringify(content))
-}
-
-function createEmptyDesign(title: string): { meta: DesignMeta; content: DesignContent } {
-  const id = crypto.randomUUID()
-  const now = Date.now()
-  return {
-    meta: { id, title, updatedAt: now },
-    content: { elements: [], scrollToContent: true, files: {} },
-  }
-}
-
-function formatDateTime(ts: number) {
-  try {
-    return new Date(ts).toLocaleString()
-  } catch {
-    return ''
-  }
-}
+import { Sidebar } from './components/Sidebar'
+import { Canvas } from './components/Canvas'
+import { createEmptyDesign } from './utils/designUtils'
+import { loadDesignContent, loadDesignList, saveDesignContent, saveDesignList, STORAGE_KEYS } from './utils/localStoreUtils'
+import type { DesignContent, DesignMeta, ExcalidrawAPI } from './utils/types'
 
 function App() {
   const [collapsed, setCollapsed] = useState(false)
@@ -180,75 +113,23 @@ function App() {
 
   return (
     <div className={`app ${collapsed ? 'collapsed' : ''}`}>
-      <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-        <div className="sidebarHeader">
-          <button
-            className="iconButton toggleButton"
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            onClick={() => setCollapsed((v: boolean) => !v)}
-          >
-            {collapsed ? <FiChevronRight aria-hidden className="icon" /> : <FiChevronLeft aria-hidden className="icon" />}
-          </button>
-          {!collapsed && <h2 className="sidebarTitle">Excalidraw</h2>}
-          {!collapsed && (
-            <button className="primaryButton newButton" onClick={createNewDesign} title="Create new design" aria-label="Create new design">
-              <FiPlus className="icon" aria-hidden />
-              <span>New</span>
-            </button>
-          )}
-        </div>
-        <div className="designList">
-          {designs.map((d: DesignMeta) =>
-            collapsed ? (
-              <div key={d.id} className={`designIconItem ${activeId === d.id ? 'active' : ''}`}>
-                <button
-                  className="designIconButton"
-                  onClick={() => setActiveId(d.id)}
-                  title={`${d.title} • ${formatDateTime(d.updatedAt)}`}
-                  aria-label={`Open ${d.title}`}
-                >
-                  <FiFile className="icon" aria-hidden />
-                </button>
-              </div>
-            ) : (
-              <div key={d.id} className={`designItem ${activeId === d.id ? 'active' : ''}`}>
-                <button className="designButton" onClick={() => setActiveId(d.id)}>
-                  <div className="designTitle">{d.title}</div>
-                  <div className="designMeta">{formatDateTime(d.updatedAt)}</div>
-                </button>
-                <div className="designActions">
-                  <button className="iconButton" onClick={() => renameDesign(d.id)} title="Rename" aria-label="Rename design">
-                    <FiEdit2 className="icon" aria-hidden />
-                  </button>
-                  <button className="iconButton" onClick={() => deleteDesign(d.id)} title="Delete" aria-label="Delete design">
-                    <FiTrash2 className="icon" aria-hidden />
-                  </button>
-                </div>
-              </div>
-            ),
-          )}
-        </div>
-      </aside>
+      <Sidebar
+        collapsed={collapsed}
+        designs={designs}
+        activeId={activeId}
+        onToggleCollapsed={() => setCollapsed((v: boolean) => !v)}
+        onCreateNew={createNewDesign}
+        onSetActive={setActiveId}
+        onRename={renameDesign}
+        onDelete={deleteDesign}
+      />
       <main className="main">
-        <div className="canvas">
-          {initialData && (
-            <Excalidraw
-              key={activeId || 'excalidraw'}
-              initialData={{
-                elements: initialData.elements || [],
-                files: initialData.files || {},
-                scrollToContent: true,
-              }}
-              onChange={(elements, _appState, files) => {
-                // mark unused param as used to satisfy noUnusedParameters
-                void _appState
-                saveScene({ elements, files })
-              }}
-              excalidrawAPI={(api) => (excalidrawApiRef.current = api)}
-            />
-          )}
-        </div>
+        <Canvas
+          activeId={activeId}
+          initialData={initialData}
+          onChange={({ elements, files }) => saveScene({ elements, files })}
+          onApiReady={(api) => (excalidrawApiRef.current = api)}
+        />
       </main>
     </div>
   )
