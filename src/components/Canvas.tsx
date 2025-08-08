@@ -39,5 +39,3 @@ export const Canvas: React.FC<CanvasProps> = ({ initialData, onChange, onApiRead
     </div>
   )
 }
-
-

@@ -16,5 +16,3 @@ export function formatDateTime(ts: number): string {
     return ''
   }
 }
-
-

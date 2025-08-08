@@ -34,5 +34,3 @@ export function loadDesignContent(id: string): DesignContent | null {
 export function saveDesignContent(id: string, content: DesignContent) {
   localStorage.setItem(STORAGE_KEYS.content(id), JSON.stringify(content))
 }
-
-

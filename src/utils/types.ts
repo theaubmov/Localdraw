@@ -21,5 +21,3 @@ export type DesignContent = {
   files?: BinaryFiles
   scrollToContent?: boolean
 }
-
-
