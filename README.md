@@ -27,27 +27,6 @@ A small Vibe Coding project built with Cursor and GPT‑5 that wraps Excalidraw 
    ```
 3. Open the app at the URL printed in your terminal (typically `http://localhost:5173`).
 
-### How it works
-- The sidebar lists your designs (stored in localStorage). Selecting a design loads its scene.
-- The canvas is powered by Excalidraw. Changes are persisted to localStorage per design.
-- Theme is detected from Excalidraw and mirrored in the app so the sidebar matches light/dark mode.
-
-### Directory structure
-```
-src/
-  components/
-    Canvas.tsx        # Excalidraw wrapper
-    Sidebar.tsx       # Collapsible design list & actions
-  utils/
-    types.ts          # Shared local types
-    designUtils.ts    # createEmptyDesign, formatDateTime
-    localStoreUtils.ts# localStorage helpers
-  App.tsx             # App state + composition
-  App.css             # App layout & sidebar styles
-  index.css           # Theme variables (light/dark)
-  main.tsx            # Entry
-```
-
 ### Notes
 - This is a local‑first demo and does not sync to a server.
 - Clearing browser storage will remove your saved designs.
