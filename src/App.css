@@ -1,0 +1,187 @@
+/* App layout */
+.app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: 100vh;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.app.collapsed {
+  grid-template-columns: 56px 1fr;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+.sidebar.collapsed {
+  width: 56px;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.sidebarTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.primaryButton {
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: #1f2937; /* neutral slate */
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.primaryButton:hover {
+  background: #111827;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.primaryButton:active {
+  background: #0b1220;
+}
+
+.iconButton {
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.iconButton:hover {
+  background: #f2f4f8;
+}
+
+.toggleButton {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.designList {
+  overflow: auto;
+  padding: 8px;
+}
+
+/* When sidebar is collapsed, stack icons vertically with tight spacing */
+.app.collapsed .designList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+}
+
+.designItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  margin-bottom: 8px;
+}
+
+.designItem.active {
+  background: var(--color-active);
+  border-color: var(--color-border-strong);
+}
+
+.designItem:hover {
+  background: var(--color-hover);
+  border-color: var(--color-border);
+}
+
+.designButton {
+  flex: 1;
+  text-align: left;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.designTitle {
+  font-weight: 600;
+}
+
+.designMeta {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.designActions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Collapsed mode icon list */
+.designIconItem {
+  display: flex;
+  justify-content: center;
+}
+
+.designIconButton {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+}
+
+.designIconButton:hover {
+  background: var(--color-hover);
+}
+
+.designIconItem.active .designIconButton {
+  background: var(--color-active);
+  border-color: var(--color-border-strong);
+}
+
+.main {
+  position: relative;
+}
+
+.canvas, .canvas > div {
+  width: 100%;
+  height: 100%;
+}
