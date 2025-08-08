@@ -137,7 +137,6 @@ function App() {
           initialData={initialData}
           onChange={({ elements, files }) => saveScene({ elements, files })}
           onApiReady={(api) => (excalidrawApiRef.current = api)}
-          theme={theme}
           onThemeChange={(t) => setTheme(t)}
         />
       </main>

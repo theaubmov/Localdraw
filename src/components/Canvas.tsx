@@ -11,7 +11,7 @@ export interface CanvasProps {
   onThemeChange?: (theme: 'light' | 'dark') => void
 }
 
-export const Canvas: React.FC<CanvasProps> = ({ activeId, initialData, onChange, onApiReady, onThemeChange }) => {
+export const Canvas: React.FC<CanvasProps> = ({ initialData, onChange, onApiReady, onThemeChange }) => {
   return (
     <div className="canvas">
       {initialData && (
