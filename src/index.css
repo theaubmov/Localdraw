@@ -18,6 +18,21 @@
   color-scheme: dark light;
 }
 
+/* Dark theme synced with Excalidraw */
+.app.theme-dark {
+  --color-bg: #0b0f19;
+  --color-panel: #0e1324;
+  --color-text: #e5e7eb;
+  --color-muted: #9ca3af;
+  --color-border: #1f2937;
+  --color-active: #111827;
+  --color-hover: #0f172a;
+  --color-border-strong: #253042;
+  --color-accent: #374151;
+  --color-primary: #3b82f6;
+  --color-primary-text: #e5e7eb;
+}
+
 html,
 body,
 #root {

@@ -11,6 +11,14 @@ function App() {
   const [designs, setDesigns] = useState<DesignMeta[]>(() => loadDesignList())
   const [activeId, setActiveId] = useState<string | null>(() => designs[0]?.id ?? null)
   const [initialData, setInitialData] = useState<DesignContent | null>(null)
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('exclidraw:ui:theme') as 'light' | 'dark') || 'light')
+  useEffect(() => {
+    try {
+      localStorage.setItem('exclidraw:ui:theme', theme)
+    } catch {
+      // ignore
+    }
+  }, [theme])
 
   const excalidrawApiRef = useRef<ExcalidrawAPI | null>(null)
 
@@ -112,7 +120,7 @@ function App() {
   }, [activeId])
 
   return (
-    <div className={`app ${collapsed ? 'collapsed' : ''}`}>
+    <div className={`app ${collapsed ? 'collapsed' : ''} ${theme === 'dark' ? 'theme-dark' : 'theme-light'}`}>
       <Sidebar
         collapsed={collapsed}
         designs={designs}
@@ -129,6 +137,8 @@ function App() {
           initialData={initialData}
           onChange={({ elements, files }) => saveScene({ elements, files })}
           onApiReady={(api) => (excalidrawApiRef.current = api)}
+          theme={theme}
+          onThemeChange={(t) => setTheme(t)}
         />
       </main>
     </div>
