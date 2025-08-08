@@ -8,20 +8,23 @@ export interface CanvasProps {
   initialData: DesignContent | null
   onChange: (content: Pick<DesignContent, 'elements' | 'files'>) => void
   onApiReady: (api: ExcalidrawAPI) => void
+  theme?: 'light' | 'dark'
   onThemeChange?: (theme: 'light' | 'dark') => void
 }
 
-export const Canvas: React.FC<CanvasProps> = ({ initialData, onChange, onApiReady, onThemeChange }) => {
+export const Canvas: React.FC<CanvasProps> = ({ initialData, onChange, onApiReady, theme, onThemeChange }) => {
   return (
     <div className="canvas">
       {initialData && (
         <Excalidraw
-          /* avoid remounting to preserve internal theme state */
-          initialData={{
-            elements: (initialData.elements as unknown as readonly never[]) || [],
-            files: (initialData.files as unknown as Record<string, never>) || {},
-            scrollToContent: true,
-          }}
+          initialData={(
+            {
+              elements: (initialData.elements as unknown as readonly never[]) || [],
+              files: (initialData.files as unknown as Record<string, never>) || {},
+              scrollToContent: true,
+              appState: theme ? ({ theme } as { theme: 'light' | 'dark' }) : undefined,
+            }
+          ) as unknown as Parameters<typeof Excalidraw>[0]['initialData']}
           onChange={(elements, _appState, files) => {
             void _appState
             const maybeTheme = (_appState as unknown as { theme?: 'light' | 'dark' } | null)?.theme

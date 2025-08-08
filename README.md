@@ -1,4 +1,4 @@
-### Excalidraw-client
+### PageDraw
 
 A small Vibe Coding project built with Cursor and GPT‑5 that wraps Excalidraw in a minimal multi‑page experience. Designs are stored in the browser (localStorage), so you can create, rename, switch, and delete multiple canvases instantly without any backend.
 

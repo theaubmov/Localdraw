@@ -76,7 +76,7 @@
 }
 
 .iconButton:hover {
-  background: #f2f4f8;
+  background: var(--color-hover);
 }
 
 .toggleButton {

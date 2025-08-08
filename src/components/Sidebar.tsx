@@ -35,7 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           {collapsed ? <FiChevronRight aria-hidden className="icon" /> : <FiChevronLeft aria-hidden className="icon" />}
         </button>
-        {!collapsed && <h2 className="sidebarTitle">Excalidraw</h2>}
+        {!collapsed && <h2 className="sidebarTitle">PageDraw</h2>}
         {!collapsed && (
           <button className="primaryButton newButton" onClick={onCreateNew} title="Create new design" aria-label="Create new design">
             <FiPlus className="icon" aria-hidden />

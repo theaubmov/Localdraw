@@ -51,12 +51,13 @@ function App() {
         excalidrawApiRef.current.updateScene({
           elements: content.elements || [],
           files: content.files || {},
+          appState: { theme },
         })
       } catch {
         // noop
       }
     }
-  }, [activeId])
+  }, [activeId, theme])
 
   const createNewDesign = useCallback(() => {
     const index = designs.length + 1
@@ -137,6 +138,7 @@ function App() {
           initialData={initialData}
           onChange={({ elements, files }) => saveScene({ elements, files })}
           onApiReady={(api) => (excalidrawApiRef.current = api)}
+          theme={theme}
           onThemeChange={(t) => setTheme(t)}
         />
       </main>

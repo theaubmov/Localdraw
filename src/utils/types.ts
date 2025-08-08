@@ -1,7 +1,13 @@
 export type BinaryFiles = Record<string, unknown>
 
 export type ExcalidrawAPI = {
-  updateScene: (opts: { elements?: readonly unknown[]; files?: BinaryFiles }) => void
+  updateScene: (opts: {
+    elements?: readonly unknown[]
+    files?: BinaryFiles
+    appState?: {
+      theme?: 'light' | 'dark'
+    }
+  }) => void
 }
 
 export type DesignMeta = {

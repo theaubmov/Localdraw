@@ -37,6 +37,12 @@
   --sidebar-bg: linear-gradient(180deg, #0e1428 0%, #0c1021 60%, #0b0f19 100%);
 }
 
+/* Ensure icon contrast on hover in dark mode */
+.app.theme-dark .iconButton:hover .icon,
+.app.theme-dark .designIconButton:hover .icon {
+  filter: brightness(1.2);
+}
+
 html,
 body,
 #root {
