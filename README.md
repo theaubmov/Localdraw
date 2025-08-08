@@ -53,4 +53,6 @@ src/
 - Clearing browser storage will remove your saved designs.
 
 ### License
-MIT
+This project is licensed under the MIT License. See `LICENSE`.
+
+This distribution includes Excalidraw, which is licensed under the MIT License. See `THIRD_PARTY_NOTICES.md` for the Excalidraw copyright and license notice.
