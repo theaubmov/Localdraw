@@ -2,7 +2,7 @@
 
 A small Vibe Coding project built with Cursor and GPT‑5 that wraps Excalidraw in a minimal multi‑page experience. Designs are stored in the browser (localStorage), so you can create, rename, switch, and delete multiple canvases instantly without any backend.
 
-<img width="2133" height="1209" alt="image" src="https://github.com/user-attachments/assets/a3a2e74a-0f02-4b87-807e-3701aa5903df" />
+<img width="2133" height="1209" alt="image" src="https://raw.githubusercontent.com/theaubmov/PageDraw/refs/heads/main/public/pagedraw.png" />
 
 
 ### Highlights
