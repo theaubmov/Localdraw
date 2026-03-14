@@ -5,7 +5,7 @@ import { Sidebar } from './components/Sidebar'
 import { Canvas } from './components/Canvas'
 import { createEmptyDesign } from './utils/designUtils'
 import { loadDesignContent, loadDesignList, saveDesignContent, saveDesignList, STORAGE_KEYS } from './utils/localStoreUtils'
-import type { DesignContent, DesignMeta, DesignViewport, ExcalidrawAPI } from './utils/types'
+import type { DesignContent, DesignMeta, DesignViewport } from './utils/types'
 
 const COLLAPSED_SIDEBAR_WIDTH = 60
 const DEFAULT_SIDEBAR_WIDTH = 248
@@ -80,10 +80,17 @@ function App() {
     }
   })
   const [designs, setDesigns] = useState<DesignMeta[]>(() => loadDesignList())
-  const [activeId, setActiveId] = useState<string | null>(() => designs[0]?.id ?? null)
-  const [initialData, setInitialData] = useState<DesignContent | null>(null)
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('exclidraw:ui:theme') as 'light' | 'dark') || 'light')
   const designContentCacheRef = useRef<Record<string, DesignContent>>({})
+  const [activeId, setActiveId] = useState<string | null>(() => designs[0]?.id ?? null)
+  const [initialData, setInitialData] = useState<DesignContent | null>(() => {
+    const firstDesignId = designs[0]?.id
+    if (!firstDesignId) return null
+
+    const content = normalizeDesignContent(loadDesignContent(firstDesignId))
+    designContentCacheRef.current[firstDesignId] = content
+    return content
+  })
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('exclidraw:ui:theme') as 'light' | 'dark') || 'light')
   const resizeStateRef = useRef<{
     pointerId: number
     startX: number
@@ -136,38 +143,53 @@ function App() {
       document.body.style.userSelect = ''
     }
   }, [isResizing])
+
+  const getDesignContent = useCallback((id: string) => {
+    const cachedContent = designContentCacheRef.current[id]
+    if (cachedContent) {
+      return cachedContent
+    }
+
+    const content = normalizeDesignContent(loadDesignContent(id))
+    designContentCacheRef.current[id] = content
+    return content
+  }, [])
+
+  const activateDesign = useCallback(
+    (id: string) => {
+      if (id === activeId) return
+      setActiveId(id)
+      setInitialData(getDesignContent(id))
+    },
+    [activeId, getDesignContent],
+  )
+
   // ensure at least one design exists
   useEffect(() => {
     if (designs.length === 0) {
       const { meta, content } = createEmptyDesign('Untitled 1')
-      designContentCacheRef.current[meta.id] = normalizeDesignContent(content)
-      saveDesignContent(meta.id, content)
+      const nextContent = normalizeDesignContent(content)
+      designContentCacheRef.current[meta.id] = nextContent
+      saveDesignContent(meta.id, nextContent)
       const nextList = [meta]
       saveDesignList(nextList)
       setDesigns(nextList)
       setActiveId(meta.id)
-      setInitialData(content)
+      setInitialData(nextContent)
     }
   }, [designs.length])
-
-  // load content when activeId changes
-  useEffect(() => {
-    if (!activeId) return
-    const content = normalizeDesignContent(loadDesignContent(activeId))
-    designContentCacheRef.current[activeId] = content
-    setInitialData(content)
-  }, [activeId])
 
   const createNewDesign = useCallback(() => {
     const index = designs.length + 1
     const { meta, content } = createEmptyDesign(`Untitled ${index}`)
-    designContentCacheRef.current[meta.id] = normalizeDesignContent(content)
-    saveDesignContent(meta.id, content)
+    const nextContent = normalizeDesignContent(content)
+    designContentCacheRef.current[meta.id] = nextContent
+    saveDesignContent(meta.id, nextContent)
     const next = [meta, ...designs]
     setDesigns(next)
     saveDesignList(next)
     setActiveId(meta.id)
-    setInitialData(content)
+    setInitialData(nextContent)
   }, [designs])
 
   const updateDesignTitle = useCallback(
@@ -195,10 +217,12 @@ function App() {
       setDesigns(next)
       saveDesignList(next)
       if (activeId === id) {
-        setActiveId(next[0]?.id ?? null)
+        const nextActiveId = next[0]?.id ?? null
+        setActiveId(nextActiveId)
+        setInitialData(nextActiveId ? getDesignContent(nextActiveId) : null)
       }
     },
-    [designs, activeId],
+    [designs, activeId, getDesignContent],
   )
 
   const reorderDesigns = useCallback((draggedId: string, targetId: string, position: 'before' | 'after') => {
@@ -365,7 +389,7 @@ function App() {
         activeId={activeId}
         onToggleCollapsed={() => setCollapsed((v: boolean) => !v)}
         onCreateNew={createNewDesign}
-        onSetActive={setActiveId}
+        onSetActive={activateDesign}
         onReorder={reorderDesigns}
         onRenameInline={updateDesignTitle}
         onDelete={deleteDesign}
@@ -399,9 +423,6 @@ function App() {
               viewport,
             })
           }
-          onApiReady={(api) => {
-            void (api as ExcalidrawAPI)
-          }}
           theme={theme}
           onThemeChange={(t) => setTheme(t)}
         />

@@ -8,17 +8,27 @@ export type DesignViewport = {
   }
 }
 
+export type ExcalidrawSceneAppState = {
+  theme?: 'light' | 'dark'
+  scrollX?: number
+  scrollY?: number
+  zoom?: DesignViewport['zoom']
+  selectedElementIds?: Record<string, true>
+  previousSelectedElementIds?: Record<string, true>
+  selectedGroupIds?: Record<string, true>
+  editingGroupId?: string | null
+}
+
 export type ExcalidrawAPI = {
   updateScene: (opts: {
     elements?: readonly unknown[]
     files?: BinaryFiles
-    appState?: {
-      theme?: 'light' | 'dark'
-      scrollX?: number
-      scrollY?: number
-      zoom?: DesignViewport['zoom']
-    }
+    appState?: ExcalidrawSceneAppState
+    captureUpdate?: 'IMMEDIATELY' | 'NEVER' | 'EVENTUALLY'
   }) => void
+  history: {
+    clear: () => void
+  }
 }
 
 export type DesignMeta = {

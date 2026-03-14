@@ -1,8 +1,8 @@
-### PageDraw
+### LocalDraw
 
-PageDraw is a local-first drawing workspace built on top of Excalidraw. It gives you a simple way to manage multiple canvases in one place, switch between them quickly, and keep your work saved in the browser without needing a backend.
+LocalDraw is a local-first drawing workspace built on top of Excalidraw. It gives you a simple way to manage multiple canvases in one place, switch between them quickly, and keep your work saved in the browser without needing a backend.
 
-<img width="2133" height="1209" alt="image" src="https://raw.githubusercontent.com/theaubmov/PageDraw/refs/heads/main/public/pagedraw.png" />
+<img width="2133" height="1209" alt="image" src="./public/pagedraw.png" />
 
 
 ### Highlights
@@ -29,7 +29,7 @@ PageDraw is a local-first drawing workspace built on top of Excalidraw. It gives
 3. Open the app at the URL printed in your terminal (typically `http://localhost:5173`).
 
 ### Notes
-- PageDraw does not sync to a server.
+- LocalDraw does not sync to a server.
 - Clearing browser storage will remove your saved designs.
 
 ### License

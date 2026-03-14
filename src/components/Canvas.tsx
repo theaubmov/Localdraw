@@ -1,14 +1,13 @@
 import '@excalidraw/excalidraw/index.css'
-import { Excalidraw } from '@excalidraw/excalidraw'
-import React from 'react'
-import type { DesignContent, DesignViewport, ExcalidrawAPI } from '../utils/types'
+import { CaptureUpdateAction, Excalidraw } from '@excalidraw/excalidraw'
+import React, { useLayoutEffect, useMemo, useRef } from 'react'
+import type { DesignContent, DesignViewport, ExcalidrawAPI, ExcalidrawSceneAppState } from '../utils/types'
 
 export interface CanvasProps {
   activeId: string | null
   initialData: DesignContent | null
   onChange: (content: Pick<DesignContent, 'elements' | 'files' | 'viewport'>) => void
   onViewportChange: (viewport: DesignViewport) => void
-  onApiReady: (api: ExcalidrawAPI) => void
   theme?: 'light' | 'dark'
   onThemeChange?: (theme: 'light' | 'dark') => void
 }
@@ -40,31 +39,64 @@ function getViewportFromAppState(appState: unknown): DesignViewport {
   return nextViewport
 }
 
-export const Canvas: React.FC<CanvasProps> = ({ activeId, initialData, onChange, onViewportChange, onApiReady, theme, onThemeChange }) => {
+function getSceneAppState(theme: 'light' | 'dark' | undefined, viewport?: DesignViewport): ExcalidrawSceneAppState {
+  return {
+    ...(theme ? { theme } : {}),
+    scrollX: viewport?.scrollX ?? 0,
+    scrollY: viewport?.scrollY ?? 0,
+    zoom: viewport?.zoom ?? { value: 1 },
+    selectedElementIds: {},
+    previousSelectedElementIds: {},
+    selectedGroupIds: {},
+    editingGroupId: null,
+  }
+}
+
+export const Canvas: React.FC<CanvasProps> = ({ activeId, initialData, onChange, onViewportChange, theme, onThemeChange }) => {
+  const apiRef = useRef<ExcalidrawAPI | null>(null)
+  const previousActiveIdRef = useRef<string | null>(null)
   const restoredViewport = initialData?.viewport
   const hasRestoredViewport =
     typeof restoredViewport?.scrollX === 'number' &&
     typeof restoredViewport?.scrollY === 'number' &&
     typeof restoredViewport?.zoom?.value === 'number'
 
-  const initialAppState = {
-    ...(theme ? { theme } : {}),
-    ...(typeof restoredViewport?.scrollX === 'number' ? { scrollX: restoredViewport.scrollX } : {}),
-    ...(typeof restoredViewport?.scrollY === 'number' ? { scrollY: restoredViewport.scrollY } : {}),
-    ...(typeof restoredViewport?.zoom?.value === 'number' ? { zoom: restoredViewport.zoom } : {}),
-  }
+  const sceneAppState = useMemo(() => getSceneAppState(theme, restoredViewport), [restoredViewport, theme])
+
+  useLayoutEffect(() => {
+    if (!activeId || !initialData || !apiRef.current) return
+
+    const didSwitchScene = previousActiveIdRef.current !== null && previousActiveIdRef.current !== activeId
+
+    apiRef.current.updateScene({
+      elements: (initialData.elements as unknown as readonly never[]) || [],
+      files: (initialData.files as unknown as Record<string, never>) || {},
+      appState: sceneAppState,
+      captureUpdate: CaptureUpdateAction.NEVER,
+    })
+
+    if (didSwitchScene) {
+      apiRef.current.history.clear()
+    }
+
+    previousActiveIdRef.current = activeId
+  }, [activeId, initialData, sceneAppState])
 
   return (
     <div className="canvas">
       {initialData && (
         <Excalidraw
-          key={activeId ?? 'empty-canvas'}
+          UIOptions={{
+            canvasActions: {
+              toggleTheme: true,
+            },
+          }}
           initialData={(
             {
               elements: (initialData.elements as unknown as readonly never[]) || [],
               files: (initialData.files as unknown as Record<string, never>) || {},
               scrollToContent: hasRestoredViewport ? false : (initialData.scrollToContent ?? true),
-              appState: Object.keys(initialAppState).length > 0 ? (initialAppState as { theme?: 'light' | 'dark' }) : undefined,
+              appState: sceneAppState,
             }
           ) as unknown as Parameters<typeof Excalidraw>[0]['initialData']}
           theme={theme}
@@ -88,7 +120,10 @@ export const Canvas: React.FC<CanvasProps> = ({ activeId, initialData, onChange,
               },
             })
           }}
-          excalidrawAPI={(api) => onApiReady(api as unknown as ExcalidrawAPI)}
+          excalidrawAPI={(api) => {
+            apiRef.current = api as unknown as ExcalidrawAPI
+            previousActiveIdRef.current ??= activeId
+          }}
         />
       )}
     </div>

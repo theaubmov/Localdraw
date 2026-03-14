@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebarInner">
         <div className="sidebarHeader">
-          {!collapsed && <h2 className="sidebarTitle">PageDraw</h2>}
+          {!collapsed && <h2 className="sidebarTitle">LocalDraw</h2>}
           <button
             className="iconButton toggleButton"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}

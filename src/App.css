@@ -106,14 +106,14 @@
   min-height: 36px;
   padding: 0 12px;
   border-radius: 9px;
-  border: 1px solid var(--color-primary);
-  background: var(--color-primary);
-  color: var(--color-primary-text);
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
   cursor: pointer;
   transition:
     background 0.16s ease,
     border-color 0.16s ease,
-    opacity 0.16s ease;
+    color 0.16s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -123,7 +123,8 @@
 }
 
 .primaryButton:hover {
-  opacity: 0.92;
+  background: var(--color-hover);
+  border-color: var(--color-primary);
 }
 
 .newButton {
