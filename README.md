@@ -2,7 +2,7 @@
 
 PageDraw is a local-first drawing workspace built on top of Excalidraw. It gives you a simple way to manage multiple canvases in one place, switch between them quickly, and keep your work saved in the browser without needing a backend.
 
-<img width="2133" height="1209" alt="image" src="https://github.com/user-attachments/assets/a3a2e74a-0f02-4b87-807e-3701aa5903df" />
+<img width="2133" height="1209" alt="image" src="https://raw.githubusercontent.com/theaubmov/PageDraw/refs/heads/main/public/pagedraw.png" />
 
 
 ### Highlights
