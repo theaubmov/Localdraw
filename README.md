@@ -1,15 +1,16 @@
 ### PageDraw
 
-A small Vibe Coding project built with Cursor and GPT‑5 that wraps Excalidraw in a minimal multi‑page experience. Designs are stored in the browser (localStorage), so you can create, rename, switch, and delete multiple canvases instantly without any backend.
+PageDraw is a local-first drawing workspace built on top of Excalidraw. It gives you a simple way to manage multiple canvases in one place, switch between them quickly, and keep your work saved in the browser without needing a backend.
 
 <img width="2133" height="1209" alt="image" src="https://github.com/user-attachments/assets/a3a2e74a-0f02-4b87-807e-3701aa5903df" />
 
 
 ### Highlights
-- **Multiple designs (pages)**: create, switch, rename, delete; each design is saved to localStorage.
-- **Autosave**: every change is saved (debounced via requestIdleCallback) so nothing is lost.
-- **Dark mode sync**: when Excalidraw switches themes, the sidebar/app theme follows automatically.
-- **Lightweight UI**: a collapsible sidebar with a clean Notion‑like look.
+- **Multiple canvases**: create, rename, switch, and delete canvases from a single sidebar.
+- **Local-first storage**: canvas data is stored in `localStorage`, so your work stays in the browser.
+- **Autosave**: changes are saved automatically while you work.
+- **Canvas state memory**: each canvas keeps its own content and viewport state.
+- **Minimal workspace UI**: a collapsible, resizable sidebar keeps navigation simple.
 
 ### Tech stack
 - React + TypeScript + Vite
@@ -28,7 +29,7 @@ A small Vibe Coding project built with Cursor and GPT‑5 that wraps Excalidraw 
 3. Open the app at the URL printed in your terminal (typically `http://localhost:5173`).
 
 ### Notes
-- This is a local‑first demo and does not sync to a server.
+- PageDraw does not sync to a server.
 - Clearing browser storage will remove your saved designs.
 
 ### License

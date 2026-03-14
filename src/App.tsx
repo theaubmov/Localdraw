@@ -7,7 +7,7 @@ import { createEmptyDesign } from './utils/designUtils'
 import { loadDesignContent, loadDesignList, saveDesignContent, saveDesignList, STORAGE_KEYS } from './utils/localStoreUtils'
 import type { DesignContent, DesignMeta, DesignViewport, ExcalidrawAPI } from './utils/types'
 
-const COLLAPSED_SIDEBAR_WIDTH = 68
+const COLLAPSED_SIDEBAR_WIDTH = 60
 const DEFAULT_SIDEBAR_WIDTH = 248
 const MIN_SIDEBAR_WIDTH = 220
 const MAX_SIDEBAR_WIDTH = 360
@@ -201,6 +201,35 @@ function App() {
     [designs, activeId],
   )
 
+  const reorderDesigns = useCallback((draggedId: string, targetId: string, position: 'before' | 'after') => {
+    if (draggedId === targetId) return
+
+    setDesigns((prev: DesignMeta[]) => {
+      const draggedIndex = prev.findIndex((design) => design.id === draggedId)
+      const targetIndex = prev.findIndex((design) => design.id === targetId)
+
+      if (draggedIndex === -1 || targetIndex === -1) {
+        return prev
+      }
+
+      const next = [...prev]
+      const [draggedDesign] = next.splice(draggedIndex, 1)
+      let insertIndex = targetIndex
+
+      if (draggedIndex < targetIndex) {
+        insertIndex -= 1
+      }
+
+      if (position === 'after') {
+        insertIndex += 1
+      }
+
+      next.splice(insertIndex, 0, draggedDesign)
+      saveDesignList(next)
+      return next
+    })
+  }, [])
+
   // save on every scene change (lightweight debounce via requestIdleCallback)
   const queueDesignSave = useMemo(() => {
     let handle: number | null = null
@@ -337,6 +366,7 @@ function App() {
         onToggleCollapsed={() => setCollapsed((v: boolean) => !v)}
         onCreateNew={createNewDesign}
         onSetActive={setActiveId}
+        onReorder={reorderDesigns}
         onRenameInline={updateDesignTitle}
         onDelete={deleteDesign}
       />

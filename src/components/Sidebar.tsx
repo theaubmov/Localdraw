@@ -9,6 +9,7 @@ export interface SidebarProps {
   onToggleCollapsed: () => void
   onCreateNew: () => void
   onSetActive: (id: string) => void
+  onReorder: (draggedId: string, targetId: string, position: 'before' | 'after') => void
   onRenameInline: (id: string, title: string) => void
   onDelete: (id: string) => void
 }
@@ -31,12 +32,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapsed,
   onCreateNew,
   onSetActive,
+  onReorder,
   onRenameInline,
   onDelete,
 }) => {
   const designCountLabel = `${designs.length} ${designs.length === 1 ? 'canvas' : 'canvases'}`
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draftTitle, setDraftTitle] = useState('')
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [dropTarget, setDropTarget] = useState<{ id: string; position: 'before' | 'after' } | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
@@ -79,6 +83,44 @@ export const Sidebar: React.FC<SidebarProps> = ({
     cancelInlineRename()
   }
 
+  const clearDragState = () => {
+    setDraggedId(null)
+    setDropTarget(null)
+  }
+
+  const handleDragStart = (id: string) => (event: React.DragEvent<HTMLDivElement>) => {
+    event.dataTransfer.effectAllowed = 'move'
+    event.dataTransfer.setData('text/plain', id)
+    setDraggedId(id)
+    setDropTarget(null)
+  }
+
+  const handleDragOver = (id: string) => (event: React.DragEvent<HTMLDivElement>) => {
+    if (!draggedId || draggedId === id) return
+
+    event.preventDefault()
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const position = event.clientY < bounds.top + bounds.height / 2 ? 'before' : 'after'
+    setDropTarget((current) => {
+      if (current?.id === id && current.position === position) {
+        return current
+      }
+
+      return { id, position }
+    })
+  }
+
+  const handleDrop = (id: string) => (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    if (!draggedId || draggedId === id || !dropTarget || dropTarget.id !== id) {
+      clearDragState()
+      return
+    }
+
+    onReorder(draggedId, id, dropTarget.position)
+    clearDragState()
+  }
+
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebarInner">
@@ -107,7 +149,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="designList">
           {collapsed
             ? designs.map((d: DesignMeta) => (
-                <div key={d.id} className={`designIconItem ${activeId === d.id ? 'active' : ''}`}>
+                <div
+                  key={d.id}
+                  className={`designIconItem ${activeId === d.id ? 'active' : ''} ${draggedId === d.id ? 'is-dragging' : ''} ${
+                    dropTarget?.id === d.id ? `drop-${dropTarget.position}` : ''
+                  }`}
+                  draggable
+                  onDragStart={handleDragStart(d.id)}
+                  onDragOver={handleDragOver(d.id)}
+                  onDrop={handleDrop(d.id)}
+                  onDragEnd={clearDragState}
+                >
                   <button
                     className="designIconButton"
                     onClick={() => onSetActive(d.id)}
@@ -121,7 +173,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               ))
             : designs.map((d: DesignMeta) => (
-                <div key={d.id} className={`designItem ${activeId === d.id ? 'active' : ''}`}>
+                <div
+                  key={d.id}
+                  className={`designItem ${activeId === d.id ? 'active' : ''} ${draggedId === d.id ? 'is-dragging' : ''} ${
+                    dropTarget?.id === d.id ? `drop-${dropTarget.position}` : ''
+                  }`}
+                  draggable={editingId !== d.id}
+                  onDragStart={handleDragStart(d.id)}
+                  onDragOver={handleDragOver(d.id)}
+                  onDrop={handleDrop(d.id)}
+                  onDragEnd={clearDragState}
+                >
                   {editingId === d.id ? (
                     <div className="designButton editing" role="group" aria-label={`Renaming ${d.title}`}>
                       <div className="designBadge" aria-hidden>
@@ -168,7 +230,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="sidebarFooter">
-          {!collapsed && <p className="sidebarFooterText">Changes stay in your browser.</p>}
+          {!collapsed && <p className="sidebarFooterText">Changes stay in your browser. Double-click to edit, drag to reorder.</p>}
           <div className="sidebarToolbar">
             <button className={`primaryButton ${collapsed ? 'collapsedNewButton' : 'newButton'}`} onClick={onCreateNew} title="Create new design" aria-label="Create new design">
               <FiPlus className="icon" aria-hidden />

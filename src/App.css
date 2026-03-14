@@ -11,7 +11,7 @@
 }
 
 .app.collapsed {
-  grid-template-columns: 68px minmax(0, 1fr);
+  grid-template-columns: 60px minmax(0, 1fr);
 }
 
 .sidebar {
@@ -197,6 +197,11 @@
   background: var(--color-border-strong);
 }
 
+.app.collapsed .sidebarResizeHandle::after {
+  left: 0;
+  transform: none;
+}
+
 .designList {
   flex: 1;
   min-height: 0;
@@ -209,6 +214,7 @@
 }
 
 .designItem {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 6px;
@@ -229,6 +235,35 @@
 .designItem.active {
   background: var(--color-selected);
   border-color: var(--color-selected-border);
+}
+
+.designItem.is-dragging,
+.designIconItem.is-dragging {
+  opacity: 0.48;
+}
+
+.designItem.drop-before::before,
+.designItem.drop-after::after,
+.designIconItem.drop-before::before,
+.designIconItem.drop-after::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+
+.designItem.drop-before::before,
+.designIconItem.drop-before::before {
+  top: -2px;
+}
+
+.designItem.drop-after::after,
+.designIconItem.drop-after::after {
+  bottom: -2px;
 }
 
 .designButton {
@@ -333,7 +368,7 @@
 }
 
 .sidebar.collapsed {
-  padding: 10px;
+  padding: 10px 6px;
 }
 
 .sidebar.collapsed .sidebarInner {
@@ -358,6 +393,11 @@
   align-items: center;
 }
 
+.sidebar.collapsed .sidebarToolbar {
+  display: flex;
+  justify-content: center;
+}
+
 .app.collapsed .designList {
   width: 100%;
   align-items: center;
@@ -365,6 +405,7 @@
 }
 
 .designIconItem {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -440,7 +481,7 @@
   }
 
   .app.collapsed {
-    grid-template-columns: 64px minmax(0, 1fr);
+    grid-template-columns: 60px minmax(0, 1fr);
   }
 
   .sidebar {
