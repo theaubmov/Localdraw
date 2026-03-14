@@ -1,46 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
 :root {
-  /* Light, Notion-like palette */
-  --color-bg: #ffffff;
-  --color-panel: #f7f7f5;
-  --color-text: #1f2328;
-  --color-muted: #6b7280;
-  --color-border: #e5e7eb;
-  --color-active: #f1f3f5;
-  --color-hover: #f7f8fa;
-  --color-border-strong: #d4d7dd;
-  --color-accent: #cbd5e1;
-  --color-primary: #2f66ff;
+  --font-ui: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-sidebar: "Quicksand", "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+  --color-bg: #f5f5f3;
+  --color-sidebar: #fbfbfa;
+  --color-shell: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-strong: #f1f1ee;
+  --color-text: #1c1d1f;
+  --color-muted: #6f7277;
+  --color-border: #e4e5e8;
+  --color-border-strong: #d3d6db;
+  --color-hover: #f3f4f6;
+  --color-selected: #eef1f4;
+  --color-selected-border: #d5dbe3;
+  --color-primary: #1c1d1f;
   --color-primary-text: #ffffff;
-  /* Subtle, cool gradient for light sidebar */
-  --sidebar-bg: linear-gradient(180deg, #fbfbfb 0%, #f5f7fb 60%, #f3f4f6 100%);
+  --color-danger: #b24a4a;
+  --color-danger-soft: #fff2f2;
 
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-    Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji",
-    "Segoe UI Emoji";
-  color-scheme: dark light;
+  color-scheme: light;
 }
 
-/* Dark theme synced with Excalidraw */
 .app.theme-dark {
-  --color-bg: #0b0f19;
-  --color-panel: #0e1324;
-  --color-text: #e5e7eb;
-  --color-muted: #9ca3af;
-  --color-border: #1f2937;
-  --color-active: #111827;
-  --color-hover: #0f172a;
-  --color-border-strong: #253042;
-  --color-accent: #374151;
-  --color-primary: #3b82f6;
-  --color-primary-text: #e5e7eb;
-  /* Subtle, cool gradient for dark sidebar */
-  --sidebar-bg: linear-gradient(180deg, #0e1428 0%, #0c1021 60%, #0b0f19 100%);
+  --color-bg: #101113;
+  --color-sidebar: #15171a;
+  --color-shell: #101113;
+  --color-surface: #17191d;
+  --color-surface-strong: #1f2227;
+  --color-text: #f2f4f7;
+  --color-muted: #9aa1ab;
+  --color-border: #2b3037;
+  --color-border-strong: #3a414b;
+  --color-hover: #20242a;
+  --color-selected: #20262d;
+  --color-selected-border: #39414c;
+  --color-primary: #f2f4f7;
+  --color-primary-text: #101113;
+  --color-danger: #f19999;
+  --color-danger-soft: #2a1717;
+
+  color-scheme: dark;
 }
 
-/* Ensure icon contrast on hover in dark mode */
-.app.theme-dark .iconButton:hover .icon,
-.app.theme-dark .designIconButton:hover .icon {
-  filter: brightness(1.2);
+* {
+  box-sizing: border-box;
 }
 
 html,
@@ -52,12 +57,21 @@ body,
   height: 100%;
 }
 
+body {
+  font-family: var(--font-ui);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
 button {
   border: 1px solid transparent;
   color: inherit;
-}
-
-/* Ensure no leftover dark gap when sidebar collapses */
-.sidebar.collapsed + .main {
-  width: calc(100vw - 56px);
 }
