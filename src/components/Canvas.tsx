@@ -39,9 +39,8 @@ function getViewportFromAppState(appState: unknown): DesignViewport {
   return nextViewport
 }
 
-function getSceneAppState(theme: 'light' | 'dark' | undefined, viewport?: DesignViewport): ExcalidrawSceneAppState {
+function getSceneAppState(viewport?: DesignViewport): ExcalidrawSceneAppState {
   return {
-    ...(theme ? { theme } : {}),
     scrollX: viewport?.scrollX ?? 0,
     scrollY: viewport?.scrollY ?? 0,
     zoom: viewport?.zoom ?? { value: 1 },
@@ -61,7 +60,7 @@ export const Canvas: React.FC<CanvasProps> = ({ activeId, initialData, onChange,
     typeof restoredViewport?.scrollY === 'number' &&
     typeof restoredViewport?.zoom?.value === 'number'
 
-  const sceneAppState = useMemo(() => getSceneAppState(theme, restoredViewport), [restoredViewport, theme])
+  const sceneAppState = useMemo(() => getSceneAppState(restoredViewport), [restoredViewport])
 
   useLayoutEffect(() => {
     if (!activeId || !initialData || !apiRef.current) return
